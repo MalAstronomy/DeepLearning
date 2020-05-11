@@ -4,33 +4,40 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self, n_channels_in, n_channels_out):
         super(Net, self).__init__()
-        
-        self.conv_layer1 = self._conv_layer_set(n_channels_in, 32)
-        self.conv_layer2 = self._conv_layer_set(32, 64)
-        self.fc1 = nn.Linear(2**3*64, 128)
-        self.fc2 = nn.Linear(128, n_channels_out)
-        self.relu = nn.LeakyReLU()
-        self.batch=nn.BatchNorm1d(128)
-        self.drop=nn.Dropout(p=0.15)        
-        
-    def _conv_layer_set(self, in_c, out_c):
-        conv_layer = nn.Sequential(
-        nn.Conv3d(in_c, out_c, kernel_size=(3, 3, 3), padding=0),
-        nn.LeakyReLU(),
-        nn.MaxPool3d((2, 2, 2)),
-        )
-        return conv_layer
-    
+        self.layer1 = nn.Sequential(
+            nn.Conv3d(n_channels_in, 64, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool3d(kernel_size=3, stride=1))
+        self.layer2 = nn.Sequential(
+            nn.Conv3d(64, 128, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool3d(kernel_size=3, stride=1))
+        self.layer3 = nn.Sequential(
+            nn.Conv3d(128, 128, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool3d(kernel_size=3, stride=1))
+        self.fc = nn.Sequential(
+            nn.Dropout(),
+            nn.Linear(128*5**3, 100),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Linear(100, n_channels_out),
+            nn.ReLU())    
 
     def forward(self, x):
-        # Set 1
-        out = self.conv_layer1(x)
-        out = self.conv_layer2(out)
-        out = out.view(out.size(0), -1)
-        out = self.fc1(out)
-        out = self.relu(out)
-        out = self.batch(out)
-        out = self.drop(out)
-        out = self.fc2(out)
+        print("input:",x.size())
+        out = self.layer1(x)
+        print("1st layer", out.size())
+        out = self.layer2(out)
+        print("2nd layer", out.size())
+        out = self.layer3(out)
+        print("3rd layer", out.size())
+        out = out.reshape(out.size(0), -1)  
+        print("reshape", out.size())
+        out = self.fc(out)
+        print("FC", out.size())
         
+        #out = self.sig(out)
+        #out = nn.functional.sigmoid(out)
+        #out = (out - torch.min(out)) / (torch.max(out) - torch.min(out))
         return out
