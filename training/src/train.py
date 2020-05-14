@@ -32,8 +32,8 @@ def train(model, dataset, optimizer, criterion, model_name, split=[0.9, 0.1], ba
                                                                batch_size=batch_size, random_seed=random_seed)
 
     # ---
-    # If the validation loss meets a plateau, we decrease the learning rate:
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20)
+    # If the validation loss reaches a plateau, we decrease the learning rate:
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
     #scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=150, gamma=0.5)
     #scheduler = CosineWithRestarts(optimizer, T_max=40, eta_min=1e-7, last_epoch=-1)
     #scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=30, eta_min=1e-7, last_epoch=-1)
@@ -97,7 +97,7 @@ def train(model, dataset, optimizer, criterion, model_name, split=[0.9, 0.1], ba
                 with torch.set_grad_enabled(phase == 'train'):
                     # 1. Make prediction:
                     ratio_estimation = model(inputs)
-                    print(inputs.size(), ratio_estimation.size(), target.size(), flush=True)
+                    #print(abs(ratio_estimation - target))
                     # 2. Compute the loss for the current batch:
                     loss = criterion(torch.squeeze(ratio_estimation), torch.squeeze(target))
 
