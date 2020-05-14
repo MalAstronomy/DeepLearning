@@ -28,7 +28,7 @@ import click
 sys.path.insert(0, './methods/')
 # Import the neural network architectures:
 from MLP import Net as MLP
-from Resnet import Net as ResNet
+#from SCN import Model as SCN
 from CNN import Net as CNN
 
 sys.path.insert(0, './src/')
@@ -62,10 +62,11 @@ from criterion import MSELoss
 def training(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learning_rate, nb_epoch, split_train):    
 
     # Name to give to the model file:
-    model_file_name = 'model_merger_1'
+    model_file_name = 'model_'+str(dataset_size)+'merger_'+dl_arch+'_3cv_bs'+str(batch_size)+'_lr'+\
+    str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_noDO'
     
     # Path where the model will be located:
-    res_path = '/home/mquesnel/Courses/DeepLearning/models/'
+    res_path = '../models/'
 
     transfo = transforms.Compose([Normalize(), ToTensor()])
 
@@ -76,11 +77,11 @@ def training(dataset_size, file_location, dl_arch, optimizer_name, batch_size, l
 
     # Load model architecture:
     if dl_arch == 'mlp':
-        model = MLP(50, 2)
+        model = MLP(70, 2)
     elif dl_arch == 'cnn':
-        model = CNN(50, 2)
-    elif dl_arch == 'ResNet50':
-        model = ResNet(50, 2)
+        model = CNN(1, 2)
+    elif dl_arch == 'scn':
+        model = SCN(1, 2)
     else:
         sys.exit("the model name specified is not valid")
 
@@ -129,7 +130,7 @@ def training(dataset_size, file_location, dl_arch, optimizer_name, batch_size, l
           optimizer, 
           criterion,
           model_name = model_file_name,
-          split = [float(split_train), 1-float(split_train)], # Split between training and validation dataset
+          split = [float(split_train)/100, 1-float(split_train)/100], # Split between training and validation dataset
           batch_size = batch_size, # number limite by GPU
           n_epochs = nb_epoch,
           model_path = res_path)
