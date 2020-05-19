@@ -26,8 +26,6 @@ class Net(nn.Module):
         x = self.layer_in(x)
         #print(x.size())
         x = self.layer_h1(x)
-        x = self.layer_h2(x)
-        x = self.layer_h3(x)
         r = self.layer_out(x)
 
         return r
