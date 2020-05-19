@@ -5,21 +5,21 @@
 #SBATCH --time="2-00:00:00" 
 #SBATCH --gres=gpu:0
 ##SBATCH --exclude=alan-compute-[06-09]
-##SBATCH --nodelist=alan-compute-01
-#SBATCH --cpus-per-task=3
-#SBATCH --mem-per-cpu=4G
+##SBATCH --nodelist=alan-compute-02
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=3G
 
 # print the name of the node on which the job is running:
 echo "Job running on $SLURMD_NODENAME"
 
 ### Copy the data to the Alan machine: ###
 
-HOME_DIR="/home/mquesnel/Courses/DeepLearning/datasets/"
+HOME_DIR="/home/mquesnel/Courses/DeepLearning/datasets/density70"
 
 NODE_DIR="/scratch/mquesnel/DeepLearningProject/"
 mkdir -p $NODE_DIR # Create the directory if it doesn't already exist
 
-FILE_NAME="merger_train_dens658.h5"
+FILE_NAME="merger_train_dens795_sqtscaled_no28_flip.h5"
 
 FILE_LOC_NODE="$NODE_DIR$FILE_NAME"
 
@@ -42,4 +42,4 @@ cd /home/mquesnel/Courses/DeepLearning/training/
 
 ### Run the python script: ###
 echo "Running the training script"
-python training_mergers.py -floc $FILE_LOC_NODE -dla "cnn" -dsiz 658 -opt "Adam" -bs 32 -lr '1e-4' -nep 100 -splt "90"
+python training_mergers.py -floc $FILE_LOC_NODE -dla "mlp" -dsiz 795 -opt "Adam" -bs 32 -lr '1e-4' -nep 100 -splt "90" -met 'mse'

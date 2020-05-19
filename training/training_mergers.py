@@ -31,7 +31,7 @@ import click
 # Local import
 sys.path.insert(0, './methods/')
 # Import the neural network architectures:
-from MLP import Net as MLP
+from MLP_1HL import Net as MLP
 #from SCN import Model as SCN
 from CNN_3CV import Net as CNN
 
@@ -200,7 +200,7 @@ def get_lr(optimizer):
 def main(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learning_rate, nb_epoch, split_train, metric):    
 
     # Name to give to the model file:
-    model_file_name = 'model_'+str(dataset_size)+'merger_'+dl_arch+'_3cv_bs'+str(batch_size)+'_lr'+\
+    model_file_name = 'model_'+str(dataset_size)+'merger_'+dl_arch+'_1hl_bs'+str(batch_size)+'_lr'+\
     str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_'+metric+'_newtargets'
     
     # Path where the model will be located:
@@ -215,7 +215,7 @@ def main(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learn
 
     # Load model architecture:
     if dl_arch == 'mlp':
-        model = MLP(70, 2)
+        model = MLP(70**3, 2)
     elif dl_arch == 'cnn':
         model = CNN(1, 2)
     elif dl_arch == 'scn':

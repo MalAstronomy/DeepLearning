@@ -8,21 +8,15 @@ class Net(nn.Module):
         ## Convolutional layers ##
         self.layer1 = self.ConvLayer(n_channels_in, 32, strd_conv=2)
         self.layer2 = self.ConvLayer(32, 64, strd_conv=2)
-        self.layer3 = self.ConvLayer(64, 128, strd_conv=1)
-        self.layer4 = self.ConvLayer(128, 256, strd_conv=1)
+        self.layer3 = self.ConvLayer(64, 128, strd_conv=2)
+        #self.layer4 = self.ConvLayer(128, 256, strd_conv=1)
 
-
+        
         ## Fully connected layers ##
         self.fc = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(256*5**3, 200),
+            nn.Linear(128*4**3, 200),
             #nn.SELU(),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(200, 200),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(200, 200),
             nn.ReLU(),
             nn.Dropout(),
             nn.Linear(200, 200),
@@ -54,7 +48,7 @@ class Net(nn.Module):
         #print("2nd layer", out.size())
         out = self.layer3(out)
         #print("3rd layer", out.size())
-        out = self.layer4(out)
+        #out = self.layer4(out)
         #print("4th layer", out.size())
         out = out.view(out.size(0), -1)  # Flatten for fully connected layers
         #print("view", out.size())
