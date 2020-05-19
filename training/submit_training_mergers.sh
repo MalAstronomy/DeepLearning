@@ -6,8 +6,8 @@
 #SBATCH --gres=gpu:0
 ##SBATCH --exclude=alan-compute-[06-09]
 ##SBATCH --nodelist=alan-compute-02
-#SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=3G
+#SBATCH --cpus-per-task=5
+#SBATCH --mem-per-cpu=6G
 
 # print the name of the node on which the job is running:
 echo "Job running on $SLURMD_NODENAME"

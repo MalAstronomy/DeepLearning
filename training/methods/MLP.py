@@ -5,11 +5,11 @@ class Net(nn.Module):
     def __init__(self, n_channels_in, n_channels_out):
         super().__init__()
         
-        self.layer_in = self.layer(n_channels_in**3, 1000)
-        self.layer_h1 = self.layer(1000, 500)
-        self.layer_h2 = self.layer(500, 500)
-        self.layer_h3 = self.layer(500, 250)
-        self.layer_out = self.layer(250, n_channels_out, DO_prob=0) #no Dropout applied
+        self.layer_in = self.layer(n_channels_in, 828)
+        self.layer_h1 = self.layer(828, 828)
+        self.layer_h2 = self.layer(828, 828)
+        self.layer_h3 = self.layer(828, 828)
+        self.layer_out = self.layer(828, n_channels_out, DO_prob=0) #no Dropout applied
 
         
     def layer(self, nb_neurons_in, nb_neurons_out, DO_prob=0.5):
@@ -29,7 +29,7 @@ class Net(nn.Module):
         #print(x.size())
         x = self.layer_h1(x)
         x = self.layer_h2(x)
-        x = self.layer_h3(x)
+        #x = self.layer_h3(x)
         r = self.layer_out(x)
 
         return r
