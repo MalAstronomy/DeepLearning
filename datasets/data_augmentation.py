@@ -35,8 +35,8 @@ warnings.filterwarnings("ignore")
 
 
 
-def data_augmentation(path_read_cubes= './density50/', path_read_labels='./labels_qtscaled/', path_save='./density70/',
-                      name_to_save = 'merger_train_dens_sqtscaled_no28_flip.h5',n_rotations = 5, min_angle=1, max_angle=360, 
+def data_augmentation(path_read_cubes= './density_train_val/', path_read_labels='./labels_qtscaled/', path_save='./density_transformed/',
+                      name_to_save = 'merger_train_val_cubes_with28.h5',n_rotations = 8, min_angle=1, max_angle=360, 
                       pad_original=True, flip_mode = 'full', axis_flip = None, verbose = True):
     
     '''
@@ -110,11 +110,12 @@ def data_augmentation(path_read_cubes= './density50/', path_read_labels='./label
         # Iterate over cube files in each epoch
         counter_label = 0
         for item in eagle_data_dict.items():
-            filename = item[0][:-4]
-            
+            density_index = item[0][:-4]
+            label  = labels[int(density_index)]
+
             if verbose == True:
                 print('')
-                print('Cube = ' + str(filename) + '  shape = ' + str(item[1].shape), flush=True)
+                print('Cube = ' + density_index + '  shape = ' + str(item[1].shape), flush=True)
 
                 
             # ROTATIONS + PADDING + FLIPPING LOOP
@@ -135,7 +136,6 @@ def data_augmentation(path_read_cubes= './density50/', path_read_labels='./label
                         continue
 
                     # Saving in the h5py file
-                    label  = labels[counter_label]
                     group_data.create_dataset(str(counter_files), data = image) 
                     group_labels.create_dataset(str(counter_files), data = label) 
 
@@ -149,7 +149,6 @@ def data_augmentation(path_read_cubes= './density50/', path_read_labels='./label
             
             # JUST FLIP
             if flip_mode and n_rotations == None:
-                label  = labels[counter_label]
                 image = flip_cube(item[1], mode = flip_mode, axis = axis_flip)
                 if verbose == True:
                     print(' > Filename = ' + str(counter_files) + '  New shape = ' +  str(image.shape) + ' Labelname = ' + str(counter_files) + ': MR/SR = ' + str(label), flush=True)
@@ -160,7 +159,6 @@ def data_augmentation(path_read_cubes= './density50/', path_read_labels='./label
 
             # JUST PAD THE ORIGINAL CUBE
             if pad_original == True:
-                label  = labels[counter_label]
                 original_padded = np.pad(item[1], ((10,10), (10,10), (10,10)), mode = 'edge')
                 if verbose == True:
                     print(' > Filename = ' + str(counter_files) +  '(original)   New shape = ' + str(original_padded.shape) + ' Labelname = ' + str(counter_files) + ': MR/SR =' + str(label), flush=True)
