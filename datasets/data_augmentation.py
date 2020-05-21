@@ -35,9 +35,9 @@ warnings.filterwarnings("ignore")
 
 
 
-def data_augmentation(path_read_cubes= './density_train_val/', path_read_labels='./labels_qtscaled/', path_save='./density_transformed/',
-                      name_to_save = 'merger_train_val_cubes_with28.h5',n_rotations = 8, min_angle=1, max_angle=360, 
-                      pad_original=True, flip_mode = 'full', axis_flip = None, verbose = True):
+def data_augmentation(path_read_cubes= './density_test/', path_read_labels='./labels_qtscaled/', path_save='./density_transformed/',
+                      name_to_save = 'merger_test_cubes_notransfo.h5',n_rotations = None, min_angle=1, max_angle=360, 
+                      pad_original=True, flip_mode = None, axis_flip = False, verbose = True):
     
     '''
     Method to prepare the training dataset in a single h5py file applying some data augmentation 
