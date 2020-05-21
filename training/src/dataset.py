@@ -7,9 +7,10 @@ import h5py
 
 class merger_dataset(Dataset):
 
-    def __init__(self, path_to_file, size, transform = None):
+    def __init__(self, path_to_file, size, nb_targets=2, transform = None):
         self.size = size
         self.path_to_file = path_to_file
+        self.nb_targets = nb_targets
         self.transform = transform
 
     def __len__(self):
@@ -26,7 +27,13 @@ class merger_dataset(Dataset):
             
             ratio = np.array(hdf['Ratio'][str(id)]).astype(np.float32)
         #ratio = np.array([MR,SR])
-        sample = {'target': ratio, 'input': density}
+        
+        if self.nb_targets == 1:
+            sample = {'target': np.array(ratio[0]), 'input': density}
+        elif self.nb_targets == 2:
+            sample = {'target': ratio, 'input': density}
+        else:
+            raise ValueError("the number of targets is not valid")
         
         if self.transform:
             sample = self.transform(sample)
