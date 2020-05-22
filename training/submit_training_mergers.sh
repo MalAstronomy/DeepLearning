@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#SBATCH --job-name=merger-cnn
+#SBATCH --job-name=merger-mlp-sgd
 #SBATCH --output=./alan-log/slurm-%j.out
-#SBATCH --time="2-00:00:00" 
+#SBATCH --time="1-00:00:00" 
 #SBATCH --gres=gpu:0
 ##SBATCH --exclude=alan-compute-[06-09]
 ##SBATCH --nodelist=alan-compute-02
@@ -43,4 +43,4 @@ cd /home/mquesnel/Courses/DeepLearning/training/
 
 ### Run the python script: ###
 echo "Running the training script"
-python training_mergers.py -floc $FILE_LOC_NODE -dla "cnn" -dsiz 1280 -outd 2 -opt "Adam" -bs 32 -lr "1e-4" -nep 50 -splt "90" -met "rmse"
+python training_mergers.py -floc $FILE_LOC_NODE -dla "mlp" -dsiz 1280 -outd 2 -opt "SGD" -bs 32 -lr "1e-4" -nep 50 -splt "90" -met "rmse"

@@ -25,13 +25,9 @@ class Net(nn.Module):
             nn.Linear(128, 128),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(128, n_channels_out),
-            nn.ReLU())
+            nn.Linear(128, n_channels_out))
         
     def ConvLayer(self, nb_neurons_in, nb_neurons_out, ksize_conv=3, strd_conv=1, pad_conv=0, ksize_pool=3, strd_pool=1, pad_pool=0):
-        '''
-        Define a convolutional layer
-        '''
         layer = nn.Sequential(
             nn.Conv3d(nb_neurons_in, nb_neurons_out, 
                       kernel_size=ksize_conv, stride=strd_conv, padding=pad_conv),

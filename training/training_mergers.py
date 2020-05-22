@@ -213,8 +213,8 @@ def main(dataset_size, file_location, dl_arch, output_dim, optimizer_name, batch
         
     # Name to give to the model file:
     model_file_name = 'model_'+str(dataset_size)+'cubes_'+str(output_dim)+'targ_'+dl_arch+layer_str+'bs'+str(batch_size)+'_lr'+\
-    str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_'+metric+'_2'#+'_relu1'#_batchnorm'
-    model_file_name
+    str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_'+metric+'_relu1_final_w300'#+'_relu1'#_batchnorm'
+
     print("model name: {}".format(model_file_name), flush = True)
     # Path where the model will be located:
     res_path = '../models/'
