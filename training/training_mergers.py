@@ -33,7 +33,7 @@ sys.path.insert(0, './methods/')
 # Import the neural network architectures:
 from MLP import Net as MLP
 #from SCN import Model as SCN
-from CNN_3CV import Net as CNN
+from CNN import Net as CNN
 
 sys.path.insert(0, './src/')
 from dataset import merger_dataset, splitDataLoader, ToTensor, Normalize
@@ -57,8 +57,7 @@ def train(model, dataset, optimizer, criterion, model_name, split=[0.9, 0.1], ba
    
     # Dataset
     dataloaders = {}
-    dataloaders['train'], dataloaders['val'] = splitDataLoader(dataset, split=split, 
-                                                               batch_size=batch_size, random_seed=random_seed)
+    dataloaders['train'], dataloaders['val'] = splitDataLoader(dataset, split=split, batch_size=batch_size, random_seed=random_seed)
 
     # ---
     # If the validation loss reaches a plateau, we decrease the learning rate:
@@ -127,6 +126,7 @@ def train(model, dataset, optimizer, criterion, model_name, split=[0.9, 0.1], ba
                     # 1. Make prediction:
                     ratio_estimation = model(inputs)
                     #print(ratio_estimation)
+                    #print(ratio_estimation)
                     #print(abs(ratio_estimation - target))
                     # 2. Compute the loss for the current batch:
                     loss = criterion(torch.squeeze(ratio_estimation), torch.squeeze(target))
@@ -177,13 +177,15 @@ def get_lr(optimizer):
 
 ## Mandatory:
 @click.option('-dla','--dl_arch', type=str, 
-              help='Machine learning architecture selected', required=True)
+              help='Deep learning architecture selected', required=True)
 @click.option('-dsiz','--dataset_size', type=int, 
               help='Number of image sets used for training and validation', required=True)
 @click.option('-floc','--file_location', type=str, 
               help='Location of the training dataset file', required=True)
 
 ## Optional:
+@click.option('-outd','--output_dim', type=int, 
+              help='Dimension of the output of the neural network (1 or 2)', default=2)
 @click.option('-opt','--optimizer_name', type=str, 
               help='Name of the optimizer', default='Adam')
 @click.option('-bs','--batch_size', type=int, 
@@ -197,12 +199,23 @@ def get_lr(optimizer):
 @click.option('-met','--metric', type=str, 
               help='Metric to use to compute the loss during training', default='mse')
               
-def main(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learning_rate, nb_epoch, split_train, metric):    
+def main(dataset_size, file_location, dl_arch, output_dim, optimizer_name, batch_size, learning_rate, nb_epoch, split_train, metric):    
 
+    # Load model architecture:
+    if dl_arch == 'mlp':
+        model = MLP(70**3, output_dim)
+        layer_str = '_2hl_'
+    elif dl_arch == 'cnn':
+        model = CNN(1, output_dim)
+        layer_str = '_3cv_'
+    else:
+        raise ValueError("the model name specified is not valid")
+        
     # Name to give to the model file:
-    model_file_name = 'model_'+str(dataset_size)+'merger_'+dl_arch+'_2hl_bs'+str(batch_size)+'_lr'+\
-    str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_'+metric+'_newtargets'
-    
+    model_file_name = 'model_'+str(dataset_size)+'cubes_'+str(output_dim)+'targ_'+dl_arch+layer_str+'bs'+str(batch_size)+'_lr'+\
+    str(learning_rate)+'_'+str(nb_epoch)+'ep_opt'+str(optimizer_name)+'_split'+split_train+'_'+metric+'_relu1_final_w300'#+'_relu1'#_batchnorm'
+
+    print("model name: {}".format(model_file_name), flush = True)
     # Path where the model will be located:
     res_path = '../models/'
 
@@ -210,16 +223,9 @@ def main(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learn
 
     # Create the dataset object:xc
     dataset = merger_dataset(path_to_file = file_location, 
-                              size = int(float(dataset_size)),
-                              transform = transfo)
-
-    # Load model architecture:
-    if dl_arch == 'mlp':
-        model = MLP(70**3, 2)
-    elif dl_arch == 'cnn':
-        model = CNN(1, 2)
-    else:
-        raise ValueError("the model name specified is not valid")
+                             size = int(float(dataset_size)),
+                             nb_targets = output_dim,
+                             transform = transfo)
 
     # Select which criterion to use to compute the loss:
     if metric == 'mse':
@@ -258,13 +264,12 @@ def main(dataset_size, file_location, dl_arch, optimizer_name, batch_size, learn
     #
     # - model = network to train
     # - dataset = dataset object
-    # - optimizer = gradient descent optimizer (Adam, SGD, RMSProp)
+    # - optimizer = gradient descent optimizer (Adam, SGD)
     # - criterion = loss function
+    # - model_name = name of the result directory
     # - split[x, 1-x] = Division train/test. 'x' is the proportion of the test set.
     # - batch_size = batch size
     # - n_epochs = number of epochs
-    # - model_dir = where to save the results
-    # - visdom =  enable real time monitoring
 
     #Launch training:
 
