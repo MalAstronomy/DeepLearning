@@ -131,6 +131,24 @@ def train(model, dataset, optimizer, criterion, model_name, split=[0.9, 0.1], ba
                     # 2. Compute the loss for the current batch:
                     loss = criterion(torch.squeeze(ratio_estimation), torch.squeeze(target))
 
+##############################################################################################
+
+                    yhat= torch.squeeze(ratio_estimation)
+                    y = torch.squeeze(target)
+                    
+                    d= {}
+                    d['yhat']= torch.flatten(yhat).detach().numpy().tolist()
+                    d['syhat']= yhat.shape
+                    d['y'] = torch.flatten(y).detach().numpy().tolist()
+                    d['sy']= y.shape
+
+                    print('yhat: ', torch.squeeze(ratio_estimation), 'y: ', torch.squeeze(target))
+
+                    with open('../../data/yhat_y.txt', 'w+') as outfile:
+                        json.dump(d , outfile)
+
+#############################################################################################
+
                     # Perform backward propagation to update the weights:
                     if phase == 'train':
                         loss.backward()
@@ -217,7 +235,7 @@ def main(dataset_size, file_location, dl_arch, output_dim, optimizer_name, batch
 
     print("model name: {}".format(model_file_name), flush = True)
     # Path where the model will be located:
-    res_path = '../models/'
+    res_path = '/home/mvvasist/EagleMergers/models/'
 
     transfo = transforms.Compose([Normalize(), ToTensor()])
 

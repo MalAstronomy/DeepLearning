@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #SBATCH --job-name=merger-mlp-sgd
-#SBATCH --output=./alan-log/slurm-%j.out
+#SBATCH --output=./home/mvvasist/EagleMergers/alan_log/slurm-%j.out
 #SBATCH --time="1-00:00:00" 
 #SBATCH --gres=gpu:0
 ##SBATCH --exclude=alan-compute-[06-09]
@@ -14,13 +14,13 @@ echo "Job running on $SLURMD_NODENAME"
 
 ### Copy the data to the Alan machine: ###
 
-HOME_DIR="/home/mquesnel/Courses/DeepLearning/datasets/density_transformed/"
+HOME_DIR="/home/mvvasist/EagleMergers/data/"
 
-NODE_DIR="/scratch/mquesnel/DeepLearningProject/"
+NODE_DIR="/scratch/mvvasist/DeepLearningProject/"
 mkdir -p $NODE_DIR # Create the directory if it doesn't already exist
 
 FILE_NAME="merger_train_val_1280cubes.h5"
-#FILE_NAME="merger_train_val_144cubes_notransfo.h5"
+
 
 FILE_LOC_NODE="$NODE_DIR$FILE_NAME"
 
@@ -36,10 +36,10 @@ fi
       
 ### Activate the virtual environment: ###
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate py3_env
+conda activate pytorch
 
 ### Go to the proper directory: ###
-cd /home/mquesnel/Courses/DeepLearning/training/
+cd /home/mvvasist/EagleMergers/DeepLearning/training/
 
 ### Run the python script: ###
 echo "Running the training script"
